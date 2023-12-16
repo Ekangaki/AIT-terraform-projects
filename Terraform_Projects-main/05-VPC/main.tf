@@ -1,42 +1,42 @@
 provider "aws" {
-  region     = "ap-south-1"
+  region     = "us-east-1"
 }
 
 
-resource "tls_private_key" "ashokitkey" {
+resource "tls_private_key" "Batch5-keypair" {
  algorithm = "RSA"
 }
 
 resource "aws_key_pair" "generated_key" {
- key_name = "ashokitkey"
- public_key = "${tls_private_key.ashokitkey.public_key_openssh}"
+ key_name = "Batch5-keypair"
+ public_key = "${tls_private_key.Batch5-keypair.public_key_openssh}"
  depends_on = [
   tls_private_key.ashokitkey
  ]
 }
 
 resource "local_file" "key" {
- content = "${tls_private_key.ashokitkey.private_key_pem}"
- filename = "ashokitkey.pem"
+ content = "${tls_private_key.Batch5-keypair.private_key_pem}"
+ filename = "Batch5-keypair.pem"
  file_permission ="0400"
  depends_on = [
-  tls_private_key.ashokitkey
+  tls_private_key.Batch5-keypair
  ]
 }
 
-resource "aws_vpc" "ashokitvpc" {
+resource "aws_vpc" "africavpc" {
  cidr_block = "10.0.0.0/16"
  instance_tenancy = "default"
  enable_dns_hostnames = "true" 
  tags = {
-  Name = "ashokitvpc"
+  Name = "africavpc"
  }
 }
 
-resource "aws_security_group" "ashokitsg" {
- name = "ashokitsg"
+resource "aws_security_group" "africasg" {
+ name = "africasg"
  description = "This firewall allows SSH, HTTP and MYSQL"
- vpc_id = "${aws_vpc.ashokitvpc.id}"
+ vpc_id = "${aws_vpc.africavpc.id}"
  
  ingress {
   description = "SSH"
@@ -70,14 +70,14 @@ resource "aws_security_group" "ashokitsg" {
  }
  
  tags = {
-  Name = "ashokitsg"
+  Name = "africasg"
  }
 }
 
 resource "aws_subnet" "public" {
- vpc_id = "${aws_vpc.ashokitvpc.id}"
+ vpc_id = "${aws_vpc.africavpc.id}"
  cidr_block = "10.0.0.0/24"
- availability_zone = "ap-south-1a"
+ availability_zone = "us-east-1a"
  map_public_ip_on_launch = "true"
  
  tags = {
@@ -85,54 +85,54 @@ resource "aws_subnet" "public" {
  } 
 }
 resource "aws_subnet" "private" {
- vpc_id = "${aws_vpc.ashokitvpc.id}"
+ vpc_id = "${aws_vpc.africatvpc.id}"
  cidr_block = "10.0.1.0/24"
- availability_zone = "ap-south-1b"
+ availability_zone = "us-east-1b"
  
  tags = {
   Name = "my_private_subnet"
  }
 }
 
-resource "aws_internet_gateway" "ashokitigw" {
- vpc_id = "${aws_vpc.ashokitvpc.id}"
+resource "aws_internet_gateway" "africagw" {
+ vpc_id = "${aws_vpc.africavpc.id}"
  
  tags = { 
-  Name = "ashokitigw"
+  Name = "africagw"
  }
 }
 
-resource "aws_route_table" "ashokitrt" {
- vpc_id = "${aws_vpc.ashokitvpc.id}"
+resource "aws_route_table" "africart" {
+ vpc_id = "${aws_vpc.africavpc.id}"
  
  route {
   cidr_block = "0.0.0.0/0"
-  gateway_id = "${aws_internet_gateway.ashokitigw.id}"
+  gateway_id = "${aws_internet_gateway.africagw.id}"
  }
  
  tags = {
-  Name = "ashokitrt"
+  Name = "africart"
  }
 }
 
 resource "aws_route_table_association" "a" {
  subnet_id = "${aws_subnet.public.id}"
- route_table_id = "${aws_route_table.ashokitrt.id}"
+ route_table_id = "${aws_route_table.africart.id}"
 }
 
 resource "aws_route_table_association" "b" {
  subnet_id = "${aws_subnet.private.id}"
- route_table_id = "${aws_route_table.ashokitrt.id}"
+ route_table_id = "${aws_route_table.africart.id}"
 }
 
 resource "aws_instance" "myserver" {
- ami = "ami-02a2af70a66af6dfb"
+ ami = "ami-0230bd60aa48260c6"
  instance_type = "t2.micro"
  key_name = "${aws_key_pair.generated_key.key_name}"
- vpc_security_group_ids = [ "${aws_security_group.ashokitsg.id}" ]
+ vpc_security_group_ids = [ "${aws_security_group.africasg.id}" ]
  subnet_id = "${aws_subnet.public.id}"
  
  tags = {
-  Name = "myserver"
+  Name = "aficaserver"
  }
 }
