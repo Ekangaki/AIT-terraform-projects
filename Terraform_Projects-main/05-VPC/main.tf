@@ -8,21 +8,18 @@ resource "tls_private_key" "Batch5-keypair" {
 }
 
 resource "aws_key_pair" "generated_key" {
- key_name = "Batch5-keypair"
- public_key = "${tls_private_key.Batch5-keypair.public_key_openssh}"
- depends_on = [
-  tls_private_key.ashokitkey
- ]
+  key_name     = "Batch5-keypair"
+  public_key   = tls_private_key.Batch5-keypair.public_key_openssh
+  depends_on   = [tls_private_key.Batch5-keypair]
 }
 
 resource "local_file" "key" {
- content = "${tls_private_key.Batch5-keypair.private_key_pem}"
- filename = "Batch5-keypair.pem"
- file_permission ="0400"
- depends_on = [
-  tls_private_key.Batch5-keypair
- ]
+  content         = tls_private_key.Batch5-keypair.private_key_pem
+  filename        = "Batch5-keypair.pem"
+  file_permission = "0400"
+  depends_on      = [tls_private_key.Batch5-keypair]
 }
+
 
 resource "aws_vpc" "africavpc" {
  cidr_block = "10.0.0.0/16"
@@ -85,7 +82,7 @@ resource "aws_subnet" "public" {
  } 
 }
 resource "aws_subnet" "private" {
- vpc_id = "${aws_vpc.africatvpc.id}"
+ vpc_id = "${aws_vpc.africavpc.id}"
  cidr_block = "10.0.1.0/24"
  availability_zone = "us-east-1b"
  
