@@ -12,16 +12,17 @@ resource "aws_instance" "web_instance" {
   vpc_security_group_ids      = [var.public_sg_id]
   associate_public_ip_address = true
 
-  user_data = <<-EOF
+user_data = <<-EOF
   #!/bin/bash -ex
 
   amazon-linux-extras install nginx1 -y
-  echo "<h1>$(curl https://api.kanye.rest)</h1>" >  /usr/share/nginx/html/index.html 
+  echo "<h1>Welcome to Afro Institute of Technology (AIT)</h1>" > /usr/share/nginx/html/index.html 
   systemctl enable nginx
   systemctl start nginx
-  EOF
+EOF
+
 
   tags = {
-    "Name" : "Ashok IT - Server"
+    "Name" : "ekangaki - Server"
   }
 }
