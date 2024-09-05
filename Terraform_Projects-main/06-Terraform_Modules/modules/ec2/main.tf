@@ -16,13 +16,13 @@ user_data = <<-EOF
   #!/bin/bash -ex
 
   amazon-linux-extras install nginx1 -y
-  echo "<h1>Welcome to Afro Institute of Technology (AIT)</h1>" > /usr/share/nginx/html/index.html 
+  echo "<h1>KEHBUMA BUNGWA TERRAFORM MODULES PoC</h1>" > /usr/share/nginx/html/index.html 
   systemctl enable nginx
   systemctl start nginx
 EOF
 
 
   tags = {
-    "Name" : "ekangaki - Server"
+    "Name" : "kehbuma-Test-Server"
   }
 }
